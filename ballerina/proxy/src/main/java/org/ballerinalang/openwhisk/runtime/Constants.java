@@ -44,4 +44,5 @@ class Constants {
     static final String INVALID_INPUT_PARAMS = "\"Invalid input parameters for action run\"";
     static final String FUNCTION_RUN_FAILURE = "\"Running Function failed\"";
     static final String DICTIONARY_RETURN_FAILURE = "\"The action did not return a dictionary.\"";
+    static final String BAD_CONTENT_REQUEST = "\"Bad content request\"";
 }

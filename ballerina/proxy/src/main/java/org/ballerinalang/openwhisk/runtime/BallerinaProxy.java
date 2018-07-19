@@ -29,6 +29,7 @@ import org.ballerinalang.util.program.BLangFunctions;
 import org.wso2.msf4j.Request;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -63,7 +64,7 @@ import javax.ws.rs.core.Response;
             return buildResponse(Response.Status.BAD_GATEWAY, Constants.RESPONSE_ERROR, Constants.INIT_ONCE_ERROR);
         }
 
-        InputStream balxIs = null;
+        InputStream ballerinaIs = null;
         try {
             ((BLogManager) LogManager.getLogManager()).loadUserProvidedLogConfiguration();
             JsonObject payload = BalxLoader.requestToJson(request);
@@ -82,20 +83,32 @@ import javax.ws.rs.core.Response;
                 mainFunction = main;
             }
 
+            String ballerinaCode = requestElements.get(Constants.CODE).getAsString();
+            ballerinaIs = new ByteArrayInputStream(ballerinaCode.getBytes(StandardCharsets.UTF_8));
+
             // Check for binary value. .balx should be received with the binary parameter
             if (isBinary) {
-                String base64Balx = requestElements.get(Constants.CODE).getAsString();
-
-                balxIs = new ByteArrayInputStream(base64Balx.getBytes(StandardCharsets.UTF_8));
-
-                java.nio.file.Path destinationPath = BalxLoader.saveBase64EncodedFile(balxIs);
+                java.nio.file.Path destinationPath = BalxLoader.saveBase64EncodedFile(ballerinaIs);
 
                 programFile = BLangProgramLoader.read(destinationPath);
 
                 return buildResponse(Response.Status.OK, Constants.RESPONSE_SUCCESS, Constants.INIT_SUCCESS);
             } else {
-                return buildResponse(Response.Status.INTERNAL_SERVER_ERROR, Constants.RESPONSE_ERROR,
-                                     Constants.FAILED_TO_LOCATE_BINARY);
+                java.nio.file.Path destinationPath = BalxLoader.saveBalFile(ballerinaIs);
+
+
+                String tempDir = new File(destinationPath.toString()).getAbsoluteFile().getParent();
+
+                if (BalxLoader.buildBal(tempDir)) {
+                    java.nio.file.Path balxString = java.nio.file.Paths.get(destinationPath + "x");
+
+                    programFile = BLangProgramLoader.read(balxString);
+
+                    return buildResponse(Response.Status.OK, Constants.RESPONSE_SUCCESS, Constants.INIT_SUCCESS);
+                } else {
+                    return buildResponse(Response.Status.BAD_REQUEST, Constants.RESPONSE_ERROR, Constants
+                            .BAD_CONTENT_REQUEST);
+                }
             }
         } catch (ProgramFileFormatException | BLangRuntimeException e) {
             return buildResponse(Response.Status.INTERNAL_SERVER_ERROR, Constants.RESPONSE_ERROR,
@@ -104,8 +117,8 @@ import javax.ws.rs.core.Response;
             return buildResponse(Response.Status.INTERNAL_SERVER_ERROR, Constants.RESPONSE_ERROR,
                                  Constants.MISSING_MAIN_ERROR);
         } finally {
-            if (balxIs != null) {
-                balxIs.close();
+            if (ballerinaIs != null) {
+                ballerinaIs.close();
             }
         }
     }
