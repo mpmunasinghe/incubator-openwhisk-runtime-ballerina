@@ -27,7 +27,7 @@ This repository contains the [Ballerina](https://ballerinalang.org) runtime for 
 
 The following prerequisites are needed to try this out:
 
-- [Ballerina](https://ballerina.io/downloads/) >= 0.975.0
+- [Ballerina](https://ballerina.io/downloads/) >= 0.981.0
 
 ### Creating a Ballerina function
 
@@ -69,7 +69,7 @@ Use the OpenWhisk [`wsk` CLI](https://github.com/apache/incubator-openwhisk/blob
 to create your Ballerina action.
 
 ```bash
-wsk action create hello hello.balx --docker openwhisk/action-ballerina-v0.975
+wsk action create hello hello.balx --docker openwhisk/action-ballerina-v0.981
 ```
 
 Now you're ready to invoke the action:

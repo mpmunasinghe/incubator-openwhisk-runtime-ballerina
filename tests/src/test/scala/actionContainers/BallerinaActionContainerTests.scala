@@ -17,6 +17,8 @@
 
 package actionContainers
 
+import java.lang.Exception
+
 import actionContainers.ActionContainer.withContainer
 import common.WskActorSystem
 import java.nio.file.{Files, Paths}
@@ -34,7 +36,7 @@ import spray.json._
 @RunWith(classOf[JUnitRunner])
 class BallerinaActionContainerTests extends BasicActionRunnerTests with WskActorSystem {
 
-  lazy val ballerinaContainerImageName = "action-ballerina-v0.975"
+  lazy val ballerinaContainerImageName = "action-ballerina-v0.981"
 
   override def withActionContainer(env: Map[String, String] = Map.empty)(code: ActionContainer => Unit) = {
     withContainer(ballerinaContainerImageName, env)(code)
@@ -150,7 +152,12 @@ class BallerinaActionContainerTests extends BasicActionRunnerTests with WskActor
     options.put(OFFLINE, "true")
 
     val compiler = Compiler.getInstance(context)
-    compiler.build()
+    try {
+      val compiledPackage = compiler.build()
+      compiler.write(compiledPackage)
+     } catch {
+      case e: Exception => return "Build Error"
+     }
 
     val diagnosticLog = BLangDiagnosticLog.getInstance(context)
     if (diagnosticLog.errorCount > 0) {

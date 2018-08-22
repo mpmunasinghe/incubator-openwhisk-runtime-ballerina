@@ -15,5 +15,5 @@
  * limitations under the License.
  */
 
-ext.dockerImageName = 'action-ballerina-v0.975'
+ext.dockerImageName = 'action-ballerina-v0.981'
 apply from: '../gradle/docker.gradle'
