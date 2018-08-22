@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 
+gradle.ext.ballerina = [
+        version: '0.981.1'
+]
+
 buildscript {
     repositories {
         jcenter()
@@ -43,28 +47,28 @@ dependencies {
     compile ("org.wso2.msf4j:msf4j-core:2.4.2") {
         force = true
     }
-    compile "org.ballerinalang:ballerina-core:0.981.0"
-    compile "org.ballerinalang:ballerina-lang:0.981.0"
-    compile "org.ballerinalang:ballerina-grpc:0.981.0"
-    compile "org.ballerinalang:ballerina-h2:0.981.0"
-    compile "org.ballerinalang:ballerina-http:0.981.0"
-    compile "org.ballerinalang:ballerina-internal:0.981.0"
-    compile "org.ballerinalang:ballerina-io:0.981.0"
-    compile "org.ballerinalang:ballerina-jdbc:0.981.0"
-    compile "org.ballerinalang:ballerina-jms:0.981.0"
-    compile "org.ballerinalang:ballerina-log-api:0.981.0"
-    compile "org.ballerinalang:ballerina-math:0.981.0"
-    compile "org.ballerinalang:ballerina-mime:0.981.0"
-    compile "org.ballerinalang:ballerina-mysql:0.981.0"
-    compile "org.ballerinalang:ballerina-reflect:0.981.0"
-    compile "org.ballerinalang:ballerina-runtime:0.981.0"
-    compile "org.ballerinalang:ballerina-sql:0.981.0"
-    compile "org.ballerinalang:ballerina-streams:0.981.0"
-    compile "org.ballerinalang:ballerina-system:0.981.0"
-    compile "org.ballerinalang:ballerina-task:0.981.0"
-    compile "org.ballerinalang:ballerina-time:0.981.0"
-    compile "org.ballerinalang:ballerina-transactions:0.981.0"
-    compile "org.ballerinalang:ballerina-websub:0.981.0"
+    compile "org.ballerinalang:ballerina-core:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-lang:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-grpc:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-h2:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-http:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-internal:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-io:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-jdbc:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-jms:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-log-api:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-math:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-mime:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-mysql:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-reflect:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-runtime:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-sql:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-streams:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-system:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-task:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-time:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-transactions:${gradle.ballerina.version}"
+    compile "org.ballerinalang:ballerina-websub:${gradle.ballerina.version}"
     compile "org.slf4j:slf4j-api:1.7.22"
 }
 
@@ -85,6 +89,7 @@ shadowJar {
     exclude 'META-INF/*.DSA'
     exclude 'META-INF/*.RSA'
 }
+
 jar {
     manifest {
         attributes 'Main-Class': mainClassName
