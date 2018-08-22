@@ -21,7 +21,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.ballerinalang.BLangProgramLoader;
 import org.ballerinalang.logging.BLogManager;
-import org.ballerinalang.model.values.BJSON;
+import org.ballerinalang.model.util.JsonParser;
 import org.ballerinalang.model.values.BValue;
 import org.ballerinalang.util.codegen.ProgramFile;
 import org.ballerinalang.util.exceptions.BLangRuntimeException;
@@ -143,7 +143,7 @@ import javax.ws.rs.core.Response;
         }
 
         //Preparing input parameters
-        BValue bJson = new BJSON(requestElements.getAsJsonObject(Constants.JSON_VALUE).toString());
+        BValue bJson = JsonParser.parse(requestElements.getAsJsonObject(Constants.JSON_VALUE).toString());
         BValue[] parameters = new BValue[1];
         parameters[0] = bJson;
 
