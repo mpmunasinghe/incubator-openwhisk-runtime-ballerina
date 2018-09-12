@@ -19,7 +19,7 @@
 
 # Apache OpenWhisk Runtime for Ballerina
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Build Status](https://travis-ci.com/apache/incubator-openwhisk-runtime-ballerina.svg?branch=master)](https://travis-ci.com/apache/incubator-openwhisk-runtime-ballerina)
+[![Build Status](https://travis-ci.org/apache/incubator-openwhisk-runtime-ballerina.svg?branch=master)](https://travis-ci.org/apache/incubator-openwhisk-runtime-ballerina)
 
 This repository contains the [Ballerina](https://ballerinalang.org) runtime for the Apache OpenWhisk serverless platform.
 
@@ -27,7 +27,7 @@ This repository contains the [Ballerina](https://ballerinalang.org) runtime for 
 
 The following prerequisites are needed to try this out:
 
-- [Ballerina](https://ballerina.io/downloads/) >= 0.981.0
+- [Ballerina](https://ballerina.io/downloads/) >= 0.981.1
 
 ### Creating a Ballerina function
 
@@ -69,7 +69,7 @@ Use the OpenWhisk [`wsk` CLI](https://github.com/apache/incubator-openwhisk/blob
 to create your Ballerina action.
 
 ```bash
-wsk action create hello hello.balx --docker openwhisk/action-ballerina-v0.981
+wsk action create hello hello.balx --docker openwhisk/action-ballerina-v0.981.1
 ```
 
 Now you're ready to invoke the action:

@@ -17,6 +17,7 @@
 
 package org.ballerinalang.openwhisk.runtime;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.ballerinalang.BLangProgramLoader;
 import org.ballerinalang.logging.BLogManager;
@@ -38,6 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.LogManager;
+import java.util.Set;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -90,11 +92,21 @@ import javax.ws.rs.core.Response;
 
                 java.nio.file.Path destinationPath = BalxLoader.saveBase64EncodedFile(balxIs);
 
-                programFile = BLangProgramLoader.read(destinationPath);
-
-                return buildResponse(Response.Status.OK, Constants.RESPONSE_SUCCESS, Constants.INIT_SUCCESS);
+                try {
+                    programFile = BLangProgramLoader.read(destinationPath);
+                    // initProgramFile initialized the Global Memory area for the function
+                    // and doing this once in the init handler permits reuse of global variables
+                    // across invocations; to disable this, the initProgramFile call should be moved
+                    // to the run handler instead.
+                    programFile = BalxLoader.initProgramFile(programFile);
+                    return buildResponse(Response.Status.OK, Constants.RESPONSE_SUCCESS, Constants.INIT_SUCCESS);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return buildRunResponse(Response.Status.BAD_REQUEST, Constants.RESPONSE_ERROR,
+                            Constants.FUNCTION_NOT_INITIALIZED);
+                }
             } else {
-                return buildResponse(Response.Status.INTERNAL_SERVER_ERROR, Constants.RESPONSE_ERROR,
+                return buildResponse(Response.Status.BAD_REQUEST, Constants.RESPONSE_ERROR,
                                      Constants.FAILED_TO_LOCATE_BINARY);
             }
         } catch (ProgramFileFormatException | BLangRuntimeException e) {
@@ -140,10 +152,10 @@ import javax.ws.rs.core.Response;
 
         //Invoking the program file
         try {
-            programFile = BalxLoader.initProgramFile(programFile);
             result = BLangFunctions
                     .invokeEntrypointCallable(programFile, programFile.getEntryPkgName(), mainFunction, parameters);
         } catch (Exception e) {
+            e.printStackTrace();
             return buildRunResponse(Response.Status.BAD_REQUEST, Constants.RESPONSE_ERROR,
                                     Constants.FUNCTION_RUN_FAILURE);
         }
@@ -168,11 +180,12 @@ import javax.ws.rs.core.Response;
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private static void augmentEnv(JsonObject requestElements) {
-        HashMap<String, String> env = new HashMap<>();
-        for (String p : new String[] { "api_key", "namespace", "action_name", "activation_id", "deadline" }) {
+        HashMap<String, String> env = new HashMap<String, String>();
+        Set<Map.Entry<String, JsonElement>> entrySet = requestElements.entrySet();
+        for(Map.Entry<String, JsonElement> entry : entrySet){
             try {
-                String val = requestElements.getAsJsonPrimitive(p).getAsString();
-                env.put(String.format("__OW_%s", p.toUpperCase()), val);
+                if(!entry.getKey().equalsIgnoreCase("value"))
+                    env.put(String.format("__OW_%s", entry.getKey().toUpperCase()), entry.getValue().getAsString());
             } catch (Exception ignored) {
             }
         }

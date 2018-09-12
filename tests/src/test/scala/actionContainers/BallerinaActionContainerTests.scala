@@ -75,8 +75,6 @@ class BallerinaActionContainerTests extends BasicActionRunnerTests with WskActor
     TestConfig(buildBal("return-response"))
   }
 
-  behavior of ballerinaContainerImageName
-
   it should "Initialize with the hello code and invoke" in {
     val (out, err) = withActionContainer() { c =>
       val sourceFile = buildBal("hello")
@@ -139,9 +137,11 @@ class BallerinaActionContainerTests extends BasicActionRunnerTests with WskActor
   }
 
   def buildBal(functionName: String): String = {
-    // Set Ballerina home path to resolve dependency libs
-    val ballerinaHome = Paths.get(System.getProperty("user.dir"), "..", "ballerina", "proxy", "build")
-    System.setProperty("ballerina.home", ballerinaHome.toString)
+    // Set Ballerina home path to resolve dependency libs if necessary
+    if (System.getProperty("ballerina.home") == null) {
+      val ballerinaHome = Paths.get(System.getProperty("user.dir"), "..", "ballerina", "proxy", "build")
+      System.setProperty("ballerina.home", ballerinaHome.toString)
+    }
 
     val path = getClass.getResource("/".concat(functionName)).getPath
     val context = new CompilerContext
@@ -155,9 +155,9 @@ class BallerinaActionContainerTests extends BasicActionRunnerTests with WskActor
     try {
       val compiledPackage = compiler.build()
       compiler.write(compiledPackage)
-     } catch {
+    } catch {
       case e: Exception => return "Build Error"
-     }
+    }
 
     val diagnosticLog = BLangDiagnosticLog.getInstance(context)
     if (diagnosticLog.errorCount > 0) {
