@@ -8,6 +8,7 @@ scala:
 - 2.11.11
 services:
 - docker
+
 notifications:
   email: false
   webhooks:
