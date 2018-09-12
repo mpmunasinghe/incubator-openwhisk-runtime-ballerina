@@ -1,11 +1,14 @@
 .vscode
 .idea
-.iml
-.balx
-.ballerina
+*.iml
+*.balx
+*~
 
+.ballerina
 ballerina-internal.log
 
 .gradle/
 ballerina/proxy/build/
+ballerina/proxy/out/
 tests/build
+tests/out/
